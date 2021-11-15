@@ -12,19 +12,13 @@ function App() {
   const yarray = doc1.getArray("myarray");
   const [array, setArray] = useState([]);
   const arrayInputRef = createRef();
-  const [YArrayIsUsed, setYArrayIsUsed] = useState(false);
 
   const addToArray = () => {
-    // console.log('addToarray before start');
-    setYArrayIsUsed(true);
     const newValue = arrayInputRef.current.value.trim();
     if (newValue && newValue !== "" && !array.includes(newValue)) {
-      setArray([...array, newValue]);
       yarray.push([newValue]);
       arrayInputRef.current.value = "";
     }
-    setYArrayIsUsed(false);
-    // console.log('addToarray after end');
   };
 
   const onInputKeyDown = (e) => {
@@ -38,21 +32,13 @@ function App() {
   };
 
   const deleteFromArray = (element, index) => {
-    setYArrayIsUsed(true);
     setArray(prevState => prevState.filter(e => e !== element));
     yarray.delete(index);
-    setYArrayIsUsed(false);
   }
 
   yarray.observe((event) => {
-    // console.log("observe");
-    // console.log("delta:", event.changes.delta);
-    // console.log("yarray.toArray", yarray.toArray());
-    if (!YArrayIsUsed) {
       setArray(yarray.slice());
-    }
   });
-
 
   return (
     <div className="container">
@@ -70,8 +56,6 @@ function App() {
         <div className="row">
 
           <div className="col-6">
-
-
             <h4 className="mt-2">React array</h4>
             <ul>
               {array.map((element, index) =>
