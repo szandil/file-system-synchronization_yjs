@@ -12,12 +12,14 @@ function App() {
   }, []);
   console.log('data2', data);
 
+
+
   // https://mui.com/components/tree-view/#basic-tree-view
   // https://github.com/chenglou/react-treeview/blob/master/demos/controlled.js
   return (
     <div className="container">
         <div className="filenav">
-
+          {JSON.stringify(data.filesystem)}
         </div>
         <div className="main-content">Main</div>
     </div>
