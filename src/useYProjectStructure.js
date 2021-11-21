@@ -98,7 +98,9 @@ export function useYProjectStructure() {
       if (nameParts.length === 1) {   // new folder
         fs.set(name, new Y.Map());
       } else {                        // new file
-        fs.set(name, `${name}value`);           // TODO: a tartalma majd Y.Text
+        const yText = new Y.Text();
+        yText.insert(0,name+'value');
+        fs.set(name, yText);        
       }
     },
 

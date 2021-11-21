@@ -1,15 +1,15 @@
 import './App.css';
 import {useYProjectStructure} from "./useYProjectStructure";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
-const _logData = (d) => {
-  for(const prop in d) {
-    console.log(prop, d[prop]);
-    if (typeof d[prop] === 'object') {
-      _logData( d[prop]);
-    }
-  }
-}
+// const _logData = (d) => {
+//   for(const prop in d) {
+//     console.log(prop, d[prop]);
+//     if (typeof d[prop] === 'object') {
+//       _logData( d[prop]);
+//     }
+//   }
+// }
 
 function App() {
 
@@ -23,13 +23,18 @@ function App() {
   }, []);
   // console.log('data2', data);
 
-  const logData = () => {
-    _logData(data)
-  };
 
   let buttons = [];
   for(const [key, value] of Object.entries(data.filesystem)) {
-    buttons.push(<button onClick={() => console.log(value)}>{key}</button>);
+    buttons.push({'key': key,'value': value});
+  }
+
+  const setActiveListBtn = (key) => {
+    let actives = document.getElementsByClassName('list-group-item active');
+    for(let activeClass of actives) {
+      activeClass.classList.remove('active');
+    }
+    document.getElementById(`list-btn-${key}`).classList.add('acitve');
   }
 
 
@@ -38,10 +43,23 @@ function App() {
   return (
     <div className="container">
       <div className="filenav">
-        {JSON.stringify(data.filesystem)}
-        <button onClick={logData} className='btn btn-primary'>Click me!</button>
-        <hr/>
-        {buttons.map(btn => btn)}
+        <div className="list-group">
+          {buttons.map(file =>
+          <button
+            type="button"
+            key={file.key}
+            id={`list-btn-${file.key}`}
+            className="list-group-item list-group-item-action"
+            onClick={() => {
+              setActiveListBtn(file.key)
+              console.log(file.value)
+            }}
+            >
+          {file.key}
+            </button>
+          )}
+        </div>
+
       </div>
       <div className="main-content">Main</div>
     </div>
