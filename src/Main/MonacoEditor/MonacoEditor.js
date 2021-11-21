@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import './MonacoEditor.module.css';
 
-import * as Y from 'yjs';
+// import * as Y from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 // import Editor from "@monaco-editor/react";
 // import * as monaco from 'monaco-editor';
@@ -14,17 +14,18 @@ const MonacoEditor = (props) => {
 
   const [editor, setEditor] = useState();
   const [monaco, setMonaco] = useState();
-  const ydoc = new Y.Doc();
-  const ytext = ydoc.getText('monaco');
+  // const ydoc = new Y.Doc();
+  // const ytext = ydoc.getText('monaco');
   const {activeFilePath} = props;
   const {projectMethods} = props;
-  ytext.insert(0,'// This is the monaco editor');
+  // ytext.insert(0,'// This is the monaco editor');
+
+  let monacoBinding = null;
 
   useEffect(() => {
-    let monacoBinding = null;
     if (editor) {
       if (monacoBinding) monacoBinding.destroy();
-      monacoBinding = props.projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
+      monacoBinding = projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
 
       // monacoBinding = new MonacoBinding(
       //   ytext,
@@ -32,7 +33,7 @@ const MonacoEditor = (props) => {
       //   new Set([editor]))
     }
 
-  }, [editor, activeFilePath]);
+  }, [editor, activeFilePath, projectMethods]);
 
   function handleEditorDidMount(editor, monaco) {
     setEditor(editor);
