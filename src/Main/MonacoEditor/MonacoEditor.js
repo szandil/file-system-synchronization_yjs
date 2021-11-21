@@ -1,9 +1,13 @@
 import React, {useEffect, useState} from "react";
 
-import * as Y from 'yjs'
-import { MonacoBinding } from 'y-monaco'
+import './MonacoEditor.module.css';
+
+import * as Y from 'yjs';
+import { MonacoBinding } from 'y-monaco';
+// import Editor from "@monaco-editor/react";
+// import * as monaco from 'monaco-editor';
 import Editor from "@monaco-editor/react";
-// import * as monaco from 'monaco-editor'
+
 
 //https://github.com/suren-atoyan/monaco-react#readme
 const MonacoEditor = (props) => {
@@ -11,10 +15,13 @@ const MonacoEditor = (props) => {
   const [editor, setEditor] = useState();
   const [monaco, setMonaco] = useState();
   const activeFilePath = ['file1.js'];
-  const ydoc = new Y.Doc()
-  const ytext = ydoc.getText('monaco')
+  const ydoc = new Y.Doc();
+  const ytext = ydoc.getText('monaco');
+  ytext.insert(0,'// This is the monaco editor');
 
   useEffect(() => {
+
+
     let monacoBinding = null;
     if (editor) {
       monacoBinding = new MonacoBinding(
@@ -32,15 +39,21 @@ const MonacoEditor = (props) => {
     console.log("onMount: the monaco instance:", monaco);
   }
 
+  // const monacoEditorStyle = {
+  //   width: '100%',
+  //   height: '600px',
+  //   border: '1px solid #ccc'
+  // }
+
   return (
-    <div id="monaco-editor">
+    // <div id="monaco-editor" style={monacoEditorStyle}>
       <Editor
         height="90vh"
         defaultLanguage="javascript"
         defaultValue="// some comment"
         onMount={handleEditorDidMount}
       />
-    </div>
+    // </div>
   );
 
 };
