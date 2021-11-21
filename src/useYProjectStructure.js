@@ -1,6 +1,5 @@
 import * as Y from "yjs";
 import {useState} from "react";
-import * as monaco from "monaco-editor";
 import {MonacoBinding} from "y-monaco";
 
 
