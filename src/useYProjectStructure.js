@@ -148,7 +148,7 @@ export function useYProjectStructure() {
       console.log('hook text', text);
 
       const ytext = doc.getText('monaco');
-      ytext.insert(0, '// This is in the hook');
+      ytext.insert(0, '// I want this file from the hook: ' + path);
       return new MonacoBinding(
         ytext,
         /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
