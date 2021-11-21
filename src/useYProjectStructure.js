@@ -153,7 +153,10 @@ export function useYProjectStructure() {
         ytext,
         /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
         new Set([editor]));
+    },
 
+    logData: () => {
+      console.log('logdata in hook', yData.toJSON());
     }
   };
 

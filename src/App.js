@@ -3,16 +3,6 @@ import {useYProjectStructure} from "./useYProjectStructure";
 import {useEffect, useState} from "react";
 import Main from "./Main/Main";
 
-
-// const _logData = (d) => {
-//   for(const prop in d) {
-//     console.log(prop, d[prop]);
-//     if (typeof d[prop] === 'object') {
-//       _logData( d[prop]);
-//     }
-//   }
-// }
-
 function App() {
 
   const [metaData, filesystem, projectMethods] = useYProjectStructure();
@@ -22,8 +12,8 @@ function App() {
     projectMethods.addFile('file1.js');
     projectMethods.addFile('file2.js');
     projectMethods.addFile('file3.js');
+    console.log("useeffect");
   }, []);
-  // console.log('data2', data);
 
 
   let buttons = [];
@@ -33,6 +23,7 @@ function App() {
     buttons.push({'key': key,'path': path});
   }
   console.log('data', filesystem);
+  const [fileInd, setFileInd] = useState(0);
 
 
   // https://mui.com/components/tree-view/#basic-tree-view
@@ -61,6 +52,12 @@ function App() {
 
       </div>
       <div className="main-content">
+        <button onClick={() => {
+          console.log(filesystem);
+          projectMethods.addFile('test.js' + fileInd);
+          setFileInd(prevState => ++prevState);
+          projectMethods.logData();
+        }}>CLICK</button>
         <Main activeFilePath={activeFilePath} projectMethods={projectMethods}/>
       </div>
     </div>
