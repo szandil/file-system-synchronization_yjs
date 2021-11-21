@@ -22,6 +22,10 @@ const MonacoEditor = (props) => {
 
   let monacoBinding = null;
 
+  // useEffect(() => {
+  //   projectMethods.addFile('file4.js');
+  // }, []);
+
   useEffect(() => {
     if (editor) {
       if (monacoBinding) monacoBinding.destroy();
