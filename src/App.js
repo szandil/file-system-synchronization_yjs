@@ -12,7 +12,6 @@ function App() {
     projectMethods.addFile('file1.js');
     projectMethods.addFile('file2.js');
     projectMethods.addFile('file3.js');
-    console.log("useeffect");
   }, []);
 
 
@@ -52,12 +51,15 @@ function App() {
 
       </div>
       <div className="main-content">
-        <button onClick={() => {
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
           console.log(filesystem);
-          projectMethods.addFile('test.js' + fileInd);
+          projectMethods.addFile('test' + fileInd + '.js');
           setFileInd(prevState => ++prevState);
           projectMethods.logData();
-        }}>CLICK</button>
+        }}>Add test file #{fileInd}</button>
         <Main activeFilePath={activeFilePath} projectMethods={projectMethods}/>
       </div>
     </div>
