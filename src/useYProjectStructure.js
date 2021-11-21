@@ -23,65 +23,67 @@ export function useYProjectStructure() {
   yData.observeDeep((event) => {
     setMetaData((yData.get('metadata')).toJSON());
     setFilesystem((yData.get('filesystem')).toJSON());
-    // setData(yData.toJSON());
+    console.log('ydata observe', yData.toJSON());
+    {    // setData(yData.toJSON());
 
-    // console.log('event', event);
+      // console.log('event', event);
 
-    // let path = event[0].path;
-    // let first = path.shift();
-    // console.log(path);
-    // let last = path.length >= 1 ? path.pop() : first;
-    // let newData = {};
-    // let newDataParts = newData;
-    // let yMap = yData.get(first);
-    // for(let p in path) {
-    //   newDataParts[p] = {};
-    //   newDataParts = newDataParts[p];
-    //   yMap = yMap.get(p);
-    // }
-    // newDataParts[last] = yMap.get(last);
-    // setData(prevData => {
-    //   return {...prevData, first: newDataParts};
-    // });
+      // let path = event[0].path;
+      // let first = path.shift();
+      // console.log(path);
+      // let last = path.length >= 1 ? path.pop() : first;
+      // let newData = {};
+      // let newDataParts = newData;
+      // let yMap = yData.get(first);
+      // for(let p in path) {
+      //   newDataParts[p] = {};
+      //   newDataParts = newDataParts[p];
+      //   yMap = yMap.get(p);
+      // }
+      // newDataParts[last] = yMap.get(last);
+      // setData(prevData => {
+      //   return {...prevData, first: newDataParts};
+      // });
 
-    // console.log('yData',yData.toJSON());
-    // console.log('data',data);
-    // let dataCopy = data;
-    //
-    // buildObject(dataCopy, yData, path);
-    // console.log('done',dataCopy);
+      // console.log('yData',yData.toJSON());
+      // console.log('data',data);
+      // let dataCopy = data;
+      //
+      // buildObject(dataCopy, yData, path);
+      // console.log('done',dataCopy);
 
-    // setData({data: 'blabla'});
+      // setData({data: 'blabla'});
 
-    // console.log(event[0].currentTarget.toJSON());
-    // console.log(key, value);
-    // console.log(event[0].path);
-    // console.log(event[0].changes);
+      // console.log(event[0].currentTarget.toJSON());
+      // console.log(key, value);
+      // console.log(event[0].path);
+      // console.log(event[0].changes);}
+    }
   });
 
-  // const buildObject = (dObj, yStructure, keys) => {
-  //   console.log('keys', keys)
-  //   if (keys.length === 0) return;
-  //   let key = keys.shift();
-  //   if (keys.length === 0 && key !== undefined) {
-  //     // console.log(dObj);
-  //     if (typeof yStructure.get(key) === "object") {
-  //       dObj[key]=yStructure.get(key).toJSON();
-  //       // console.log('if', dObj);
-  //     } else {
-  //       dObj[key]=yStructure.get(key);
-  //       console.log('else', dObj);
-  //     }
-  //     // return newObj;
-  //   } else {
-  //     let newYStructure = yStructure.get(key);
-  //     let newObj = dObj[key];
-  //     console.log('newystru0', newYStructure);
-  //     buildObject(newObj, newYStructure, keys);
-  //   }
-  //   // return newObj;
-  // };
-
+  {  // const buildObject = (dObj, yStructure, keys) => {
+    //   console.log('keys', keys)
+    //   if (keys.length === 0) return;
+    //   let key = keys.shift();
+    //   if (keys.length === 0 && key !== undefined) {
+    //     // console.log(dObj);
+    //     if (typeof yStructure.get(key) === "object") {
+    //       dObj[key]=yStructure.get(key).toJSON();
+    //       // console.log('if', dObj);
+    //     } else {
+    //       dObj[key]=yStructure.get(key);
+    //       console.log('else', dObj);
+    //     }
+    //     // return newObj;
+    //   } else {
+    //     let newYStructure = yStructure.get(key);
+    //     let newObj = dObj[key];
+    //     console.log('newystru0', newYStructure);
+    //     buildObject(newObj, newYStructure, keys);
+    //   }
+    //   // return newObj;
+    // };}
+  }
   const projectMethods = {
 
     addFile: (path) => {
@@ -135,25 +137,22 @@ export function useYProjectStructure() {
     //   }
     // }
 
-    createMonacoBinding: (id, path) => {
-      // editor = monaco.editor.create(
-      //   document.getElementById(id),
-      //   {}
-      // );
-      //
-      // let type=null;
-      // let fs = yData.get('filesystem');
-      // while(path.length > 1) {
-      //   fs = fs.get(path.shift());
-      // }
-      // type=fs.get(path[0]);
-      //
-      // monacoBinding = new MonacoBinding(
-      //   type,
-      //   editor.getModel(),
-      //   new Set([editor]),
-      //   // provider.awareness
-      // );
+    createMonacoBinding: (path, editor, monaco) => {
+      console.log('yData',yData.toJSON());
+      let text=null;
+      let fs = yData.get('filesystem');
+      while(path.length > 1) {
+        fs = fs.get(path.shift());
+      }
+      text=fs.get(path[0]);
+      console.log('hook text', text);
+
+      const ytext = doc.getText('monaco');
+      ytext.insert(0, 'This is in the hook');
+      return new MonacoBinding(
+        ytext,
+        /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
+        new Set([editor]));
 
     }
   };

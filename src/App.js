@@ -32,6 +32,7 @@ function App() {
     path = [key];
     buttons.push({'key': key,'path': path});
   }
+  console.log('data', filesystem);
 
 
   // https://mui.com/components/tree-view/#basic-tree-view

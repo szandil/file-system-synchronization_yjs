@@ -14,23 +14,25 @@ const MonacoEditor = (props) => {
 
   const [editor, setEditor] = useState();
   const [monaco, setMonaco] = useState();
-  const activeFilePath = ['file1.js'];
   const ydoc = new Y.Doc();
   const ytext = ydoc.getText('monaco');
+  const {activeFilePath} = props;
+  const {projectMethods} = props;
   ytext.insert(0,'// This is the monaco editor');
 
   useEffect(() => {
-
-
     let monacoBinding = null;
     if (editor) {
-      monacoBinding = new MonacoBinding(
-        ytext,
-        /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
-        new Set([editor]))
+      if (monacoBinding) monacoBinding.destroy();
+      monacoBinding = props.projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
+
+      // monacoBinding = new MonacoBinding(
+      //   ytext,
+      //   /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
+      //   new Set([editor]))
     }
 
-  }, [editor]);
+  }, [editor, activeFilePath]);
 
   function handleEditorDidMount(editor, monaco) {
     setEditor(editor);
@@ -47,13 +49,14 @@ const MonacoEditor = (props) => {
 
   return (
     // <div id="monaco-editor" style={monacoEditorStyle}>
+    <div id="monaco-editor">
       <Editor
         height="90vh"
         defaultLanguage="javascript"
         defaultValue="// some comment"
         onMount={handleEditorDidMount}
       />
-    // </div>
+    </div>
   );
 
 };
