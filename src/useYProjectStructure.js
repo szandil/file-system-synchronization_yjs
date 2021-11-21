@@ -2,9 +2,15 @@ import * as Y from "yjs";
 import {useState} from "react";
 import {MonacoBinding} from "y-monaco";
 
+const doc = new Y.Doc();
+const yData = doc.getMap('project-data');
+yData.set('metadata', new Y.Map());
+yData.set('filesystem', new Y.Map());
+const yText = doc.getText('monaco');
+
 
 export function useYProjectStructure() {
-  const doc = new Y.Doc();
+
 
   const [metaData,setMetaData] = useState({});
   const [filesystem, setFilesystem] = useState({});
@@ -14,10 +20,6 @@ export function useYProjectStructure() {
   //   metadata: {},
   //   filesystem: {}
   // });
-
-  const yData = doc.getMap('project-data');
-  yData.set('metadata', new Y.Map());
-  yData.set('filesystem', new Y.Map());
 
 
   yData.observeDeep((event) => {
@@ -139,18 +141,18 @@ export function useYProjectStructure() {
 
     createMonacoBinding: (path, editor, monaco) => {
       console.log('yData',yData.toJSON());
-      let text=null;
-      let fs = yData.get('filesystem');
-      while(path.length > 1) {
-        fs = fs.get(path.shift());
-      }
-      text=fs.get(path[0]);
-      console.log('hook text', text);
+      // let text=null;
+      // let fs = yData.get('filesystem');
+      // while(path.length > 1) {
+      //   fs = fs.get(path.shift());
+      // }
+      // text=fs.get(path[0]);
+      // console.log('hook text', text);
 
-      const ytext = doc.getText('monaco');
-      ytext.insert(0, '// I want this file from the hook: ' + path);
+
+      yText.insert(0, '// I want this file from the hook: ');
       return new MonacoBinding(
-        ytext,
+        yText,
         /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
         new Set([editor]));
     },
