@@ -1,14 +1,20 @@
 import * as Y from "yjs";
 import {useState} from "react";
+import * as monaco from "monaco-editor";
+import {MonacoBinding} from "y-monaco";
 
 
 export function useYProjectStructure() {
   const doc = new Y.Doc();
 
-  const [data, setData] = useState({
-    metadata: {},
-    filesystem: {}
-  });
+  const [metaData,setMetaData] = useState({});
+  const [filesystem, setFilesystem] = useState({});
+  let editor = null;
+  let monacoBinding = null;
+  // const [data, setData] = useState({
+  //   metadata: {},
+  //   filesystem: {}
+  // });
 
   const yData = doc.getMap('project-data');
   yData.set('metadata', new Y.Map());
@@ -16,7 +22,9 @@ export function useYProjectStructure() {
 
 
   yData.observeDeep((event) => {
-    setData(yData.toJSON());
+    setMetaData((yData.get('metadata')).toJSON());
+    setFilesystem((yData.get('filesystem')).toJSON());
+    // setData(yData.toJSON());
 
     // console.log('event', event);
 
@@ -100,7 +108,7 @@ export function useYProjectStructure() {
       } else {                        // new file
         const yText = new Y.Text();
         yText.insert(0,name+'value');
-        fs.set(name, yText);        
+        fs.set(name, yText);
       }
     },
 
@@ -127,7 +135,29 @@ export function useYProjectStructure() {
     //     fs.delete(last);
     //   }
     // }
+
+    createMonacoBinding: (id, path) => {
+      // editor = monaco.editor.create(
+      //   document.getElementById(id),
+      //   {}
+      // );
+      //
+      // let type=null;
+      // let fs = yData.get('filesystem');
+      // while(path.length > 1) {
+      //   fs = fs.get(path.shift());
+      // }
+      // type=fs.get(path[0]);
+      //
+      // monacoBinding = new MonacoBinding(
+      //   type,
+      //   editor.getModel(),
+      //   new Set([editor]),
+      //   // provider.awareness
+      // );
+
+    }
   };
 
-  return [data, projectMethods];
+  return [metaData, filesystem, projectMethods];
 }

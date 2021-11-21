@@ -1,3 +1,8 @@
+.all {
+    /*color: #d0cece;*/
+    color: rgb(97,97,97);
+}
+
 /* The sidebar menu */
 .filenav {
     height: 100%;
@@ -6,10 +11,12 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #11163f;
+    /*background-color: #2d333b;*/
+    background-color: rgb(243,243,243);
+    box-shadow: 5px 3px 3px 0px rgba(31,31,31,0.2);
     overflow-x: hidden;
     padding-top: 20px;
-    color: #c4c4c4;
+
 }
 
 
@@ -17,5 +24,9 @@
 /* Style page content */
 .main-content {
     margin-left: 160px; /* Same as the width of the sidebar */
-    padding: 0 10px;
+    padding: 20px;
+    position: fixed;
+    background-color: rgb(243,243,243);
+    height: 100%;
+    width: calc(100vw - 160px);
 }
