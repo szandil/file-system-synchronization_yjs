@@ -8,6 +8,7 @@ import { MonacoBinding } from 'y-monaco';
 // import * as monaco from 'monaco-editor';
 import Editor from "@monaco-editor/react";
 
+let monacoBinding = null;
 
 //https://github.com/suren-atoyan/monaco-react#readme
 const MonacoEditor = (props) => {
@@ -20,15 +21,15 @@ const MonacoEditor = (props) => {
   const {projectMethods} = props;
   // ytext.insert(0,'// This is the monaco editor');
 
-  let monacoBinding = null;
+
 
   // useEffect(() => {
   //   projectMethods.addFile('file4.js');
   // }, []);
 
   useEffect(() => {
-    if (editor) {
-      if (monacoBinding) monacoBinding.destroy();
+    if (editor && activeFilePath.length > 0) {
+      // if (monacoBinding) monacoBinding.destroy();
       monacoBinding = projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
 
       // monacoBinding = new MonacoBinding(
