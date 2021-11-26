@@ -13,8 +13,6 @@ yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
   const provider = new WebsocketProvider('wss://demos.yjs.dev', 'monaco', doc)
 
-// const yText = doc.getText('monaco');
-
 
 export function useYProjectStructure() {
 
@@ -47,8 +45,6 @@ export function useYProjectStructure() {
   const createObserve = (yMap) => {
     yMap.observe(event => {
       console.log('\n');
-      console.log(yMap.toJSON());
-      console.log('ydata observe event', event.changes);
       // if (Array.from(event[0].changes.keys.entries()).length > 0) {
       setMetaData((yData.get('metadata')).toJSON());
       setFilesystem((yData.get('filesystem')).toJSON());
@@ -58,33 +54,6 @@ export function useYProjectStructure() {
       // }
     });
   };
-
-  // TODO: useeffect
-
-
-  {  // const buildObject = (dObj, yStructure, keys) => {
-    //   console.log('keys', keys)
-    //   if (keys.length === 0) return;
-    //   let key = keys.shift();
-    //   if (keys.length === 0 && key !== undefined) {
-    //     // console.log(dObj);
-    //     if (typeof yStructure.get(key) === "object") {
-    //       dObj[key]=yStructure.get(key).toJSON();
-    //       // console.log('if', dObj);
-    //     } else {
-    //       dObj[key]=yStructure.get(key);
-    //       console.log('else', dObj);
-    //     }
-    //     // return newObj;
-    //   } else {
-    //     let newYStructure = yStructure.get(key);
-    //     let newObj = dObj[key];
-    //     console.log('newystru0', newYStructure);
-    //     buildObject(newObj, newYStructure, keys);
-    //   }
-    //   // return newObj;
-    // };}
-  }
 
 
   const projectMethods = {

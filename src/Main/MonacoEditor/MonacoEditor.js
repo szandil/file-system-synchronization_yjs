@@ -15,11 +15,8 @@ const MonacoEditor = (props) => {
 
   const [editor, setEditor] = useState();
   const [monaco, setMonaco] = useState();
-  // const ydoc = new Y.Doc();
-  // const ytext = ydoc.getText('monaco');
   const {activeFilePath} = props;
   const {projectMethods} = props;
-  // ytext.insert(0,'// This is the monaco editor');
 
 
 
@@ -50,14 +47,7 @@ const MonacoEditor = (props) => {
     console.log("onMount: the monaco instance:", monaco);
   }
 
-  // const monacoEditorStyle = {
-  //   width: '100%',
-  //   height: '600px',
-  //   border: '1px solid #ccc'
-  // }
-
   return (
-    // <div id="monaco-editor" style={monacoEditorStyle}>
     <div id="monaco-editor">
       <Editor
         height="90vh"
@@ -67,7 +57,6 @@ const MonacoEditor = (props) => {
       />
     </div>
   );
-
 };
 
 export default MonacoEditor;

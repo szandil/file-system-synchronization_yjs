@@ -21,13 +21,9 @@ function App() {
     path = [key];
     buttons.push({'key': key,'path': path});
   }
-  console.log('data', filesystem);
 
   const [fileInd, setFileInd] = useState(0);
 
-
-  // https://mui.com/components/tree-view/#basic-tree-view
-  // https://github.com/chenglou/react-treeview/blob/master/demos/controlled.js
   return (
     <div className="all">
       <div className="filenav">
@@ -40,9 +36,6 @@ function App() {
             className={`list-group-item list-group-item-action ${activeFilePath.toString()===file.path.toString() ? 'active' : ''}`}
             onClick={() => {
               setActiveFilePath(file.path)
-              console.log(file.path.toString());
-              console.log('fs', filesystem);
-              console.log('md', metaData);
             }}
             >
           {file.key}
@@ -56,7 +49,6 @@ function App() {
           type="button"
           className="btn btn-primary"
           onClick={() => {
-          console.log(filesystem);
           projectMethods.addFile('test' + fileInd + '.js');
           setFileInd(prevState => ++prevState);
           projectMethods.logData();
