@@ -29,13 +29,16 @@ const MonacoEditor = (props) => {
 
   useEffect(() => {
     if (editor && activeFilePath.length > 0) {
-      // if (monacoBinding) monacoBinding.destroy();
+
       monacoBinding = projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
 
       // monacoBinding = new MonacoBinding(
       //   ytext,
       //   /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
       //   new Set([editor]))
+      return () => {
+        monacoBinding?.destroy();
+      };
     }
 
   }, [editor, activeFilePath, projectMethods]);

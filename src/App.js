@@ -1,13 +1,9 @@
 import './App.css';
 import {useYProjectStructure} from "./useYProjectStructure";
-import {useContext, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import Main from "./Main/Main";
-// import DataContext from "./context/Data-Context";
-import data from "bootstrap/js/src/dom/data";
 
 function App() {
-
-  // const dataCtx = useContext(DataContext);
 
   const [metaData, filesystem, projectMethods] = useYProjectStructure();
   const [activeFilePath, setActiveFilePath] = useState([]);

@@ -6,6 +6,7 @@ const Main = (props) => {
   return (
     <div>
       <p>Active file: {props.activeFilePath}</p>
+      {/* unbind helyett rerender */}
       <MonacoEditor projectMethods={props.projectMethods} activeFilePath={props.activeFilePath}/>
     </div>
   );

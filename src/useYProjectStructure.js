@@ -1,12 +1,19 @@
 import * as Y from "yjs";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {MonacoBinding} from "y-monaco";
+import {WebsocketProvider} from "y-websocket";
 
 const doc = new Y.Doc();
+
+
+
+
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
-const yText = doc.getText('monaco');
+  const provider = new WebsocketProvider('wss://demos.yjs.dev', 'monaco', doc)
+
+// const yText = doc.getText('monaco');
 
 
 export function useYProjectStructure() {
@@ -14,54 +21,46 @@ export function useYProjectStructure() {
 
   const [metaData,setMetaData] = useState({});
   const [filesystem, setFilesystem] = useState({});
-  let editor = null;
-  let monacoBinding = null;
 
 
-  yData.observeDeep((event) => {
-    // console.log('ydata observe event', Array.from(event[0].changes.keys.entries())[0][1].action);
-    console.log('ydata observe event', event[0].changes);
-    if (Array.from(event[0].changes.keys.entries()).length > 0) {
+  // yData.observeDeep((event) => {
+  //   // console.log('ydata observe event', Array.from(event[0].changes.keys.entries())[0][1].action);
+  //   console.log('ydata observe event', event[0].changes);
+  //   if (Array.from(event[0].changes.keys.entries()).length > 0) {
+  //     setMetaData((yData.get('metadata')).toJSON());
+  //     setFilesystem((yData.get('filesystem')).toJSON());
+  //     console.log('ydata observe', yData.toJSON());
+  //   }
+  //   {
+  //     // console.log(event[0].currentTarget.toJSON());
+  //     // console.log(key, value);
+  //     // console.log(event[0].path);
+  //     // console.log(event[0].changes);}
+  //   }
+  // });
+
+  useEffect(() =>{
+    createObserve(yData.get('metadata'));
+    createObserve(yData.get('filesystem'));
+  }, []);
+
+  const createObserve = (yMap) => {
+    yMap.observe(event => {
+      console.log('\n');
+      console.log(yMap.toJSON());
+      console.log('ydata observe event', event.changes);
+      // if (Array.from(event[0].changes.keys.entries()).length > 0) {
       setMetaData((yData.get('metadata')).toJSON());
       setFilesystem((yData.get('filesystem')).toJSON());
       console.log('ydata observe', yData.toJSON());
-    }
-    {    // setData(yData.toJSON());
+      console.log('\n');
 
-      // console.log('event', event);
-
-      // let path = event[0].path;
-      // let first = path.shift();
-      // console.log(path);
-      // let last = path.length >= 1 ? path.pop() : first;
-      // let newData = {};
-      // let newDataParts = newData;
-      // let yMap = yData.get(first);
-      // for(let p in path) {
-      //   newDataParts[p] = {};
-      //   newDataParts = newDataParts[p];
-      //   yMap = yMap.get(p);
       // }
-      // newDataParts[last] = yMap.get(last);
-      // setData(prevData => {
-      //   return {...prevData, first: newDataParts};
-      // });
+    });
+  };
 
-      // console.log('yData',yData.toJSON());
-      // console.log('data',data);
-      // let dataCopy = data;
-      //
-      // buildObject(dataCopy, yData, path);
-      // console.log('done',dataCopy);
+  // TODO: useeffect
 
-      // setData({data: 'blabla'});
-
-      // console.log(event[0].currentTarget.toJSON());
-      // console.log(key, value);
-      // console.log(event[0].path);
-      // console.log(event[0].changes);}
-    }
-  });
 
   {  // const buildObject = (dObj, yStructure, keys) => {
     //   console.log('keys', keys)
@@ -86,6 +85,8 @@ export function useYProjectStructure() {
     //   // return newObj;
     // };}
   }
+
+
   const projectMethods = {
 
     addFile: (path) => {
@@ -108,6 +109,7 @@ export function useYProjectStructure() {
 
       if (nameParts.length === 1) {   // new folder
         fs.set(name, new Y.Map());
+        createObserve(fs.get(name));
       } else {                        // new file
         const yText = new Y.Text();
         yText.insert(0,name+'value');
