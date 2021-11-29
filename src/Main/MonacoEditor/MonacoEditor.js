@@ -2,10 +2,6 @@ import React, {useEffect, useState} from "react";
 
 import './MonacoEditor.module.css';
 
-// import * as Y from 'yjs';
-import { MonacoBinding } from 'y-monaco';
-// import Editor from "@monaco-editor/react";
-// import * as monaco from 'monaco-editor';
 import Editor from "@monaco-editor/react";
 
 let monacoBinding = null;
@@ -19,20 +15,11 @@ const MonacoEditor = (props) => {
   const {projectMethods} = props;
 
 
-
-  // useEffect(() => {
-  //   projectMethods.addFile('file4.js');
-  // }, []);
-
   useEffect(() => {
     if (editor && activeFilePath.length > 0) {
 
       monacoBinding = projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
 
-      // monacoBinding = new MonacoBinding(
-      //   ytext,
-      //   /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
-      //   new Set([editor]))
       return () => {
         monacoBinding?.destroy();
       };

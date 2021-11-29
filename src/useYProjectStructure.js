@@ -11,7 +11,7 @@ const doc = new Y.Doc();
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
-  const provider = new WebsocketProvider('wss://demos.yjs.dev', 'monaco', doc)
+const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
 
 
 export function useYProjectStructure() {
@@ -123,7 +123,9 @@ export function useYProjectStructure() {
       return new MonacoBinding(
         text,
         /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
-        new Set([editor]));
+        new Set([editor]),
+        provider.awareness
+      );
     },
 
     logData: () => {
