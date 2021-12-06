@@ -54,7 +54,7 @@ export function useYProjectStructure() {
     if (person === " ") {
       person = Math.floor(Math.random() * 10) + "User";
     }
-    awareness.setLocalStateField("cursor", true);
+    awareness.setLocalStateField("cursor", {cursor: true});
     awareness.setLocalStateField("user", {
       name: person,
       color: '#' + Math.floor(Math.random()*16777215).toString(16),
