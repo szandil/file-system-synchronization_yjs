@@ -15,6 +15,8 @@ const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
 const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
+const awareness = provider.awareness;
+
 
 
 export function useYProjectStructure() {
@@ -43,6 +45,25 @@ export function useYProjectStructure() {
   useEffect(() =>{
     createObserve(yData.get('metadata'));
     createObserve(yData.get('filesystem'));
+    var person = prompt(
+      "Please enter your name",
+      Math.floor(Math.random() * 10) + "User"
+    );
+
+    if (person === " ") {
+      person = Math.floor(Math.random() * 10) + "User";
+    }
+    awareness.setLocalStateField("cursor")
+    awareness.setLocalStateField("user", {
+      name: person,
+      color: '#' + Math.floor(Math.random()*16777215).toString(16),
+    });
+    console.log(awareness.clientID);
+    awareness.on('change', changes => {
+      // Whenever somebody updates their awareness information,
+      // we log all awareness information from all users.
+      console.log(Array.from(awareness.getStates().values()))
+    })
   }, []);
 
   const createObserve = (yMap) => {
@@ -122,21 +143,7 @@ export function useYProjectStructure() {
       }
       text=fs.get(path[0]);
 
-      const awareness = provider.awareness;
-      var person = prompt(
-        "Please enter your name",
-        Math.floor(Math.random() * 10) + "User"
-      );
 
-      if (person === " ") {
-        person = Math.floor(Math.random() * 10) + "User";
-      }
-      awareness.setLocalStateField("cursor")
-      awareness.setLocalStateField("user", {
-        name: person,
-        color: '#' + Math.floor(Math.random()*16777215).toString(16),
-      });
-      console.log(awareness.clientID);
 
 
       // return null;
