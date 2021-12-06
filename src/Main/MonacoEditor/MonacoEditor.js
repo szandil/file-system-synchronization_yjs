@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import './MonacoEditor.module.css';
 
-import Editor from "@monaco-editor/react";
+import Editor, {useMonaco} from "@monaco-editor/react";
 
 let monacoBinding = null;
 
@@ -10,13 +10,14 @@ let monacoBinding = null;
 const MonacoEditor = (props) => {
 
   const [editor, setEditor] = useState();
-  const [monaco, setMonaco] = useState();
+  // const [monaco, setMonaco] = useState();
+  const monaco = useMonaco();
   const {activeFilePath} = props;
   const {projectMethods} = props;
 
 
   useEffect(() => {
-    if (editor && activeFilePath.length > 0) {
+    if (editor && monaco && activeFilePath.length > 0) {
 
       monacoBinding = projectMethods.createMonacoBinding(activeFilePath, editor, monaco);
 
@@ -29,7 +30,7 @@ const MonacoEditor = (props) => {
 
   function handleEditorDidMount(editor, monaco) {
     setEditor(editor);
-    setMonaco(monaco);
+    // setMonaco(monaco);
     console.log("onMount: the editor instance:", editor);
     console.log("onMount: the monaco instance:", monaco);
   }
