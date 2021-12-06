@@ -2,6 +2,7 @@ import * as Y from "yjs";
 import {useEffect, useState} from "react";
 import {MonacoBinding} from "y-monaco";
 import {WebsocketProvider} from "y-websocket";
+import * as awarenessProtocol from 'y-protocols/awareness.js'
 
 const doc = new Y.Doc();
 
@@ -53,7 +54,7 @@ export function useYProjectStructure() {
     if (person === " ") {
       person = Math.floor(Math.random() * 10) + "User";
     }
-    // awareness.setLocalStateField("cursor")
+    awareness.setLocalStateField("cursor", true);
     awareness.setLocalStateField("user", {
       name: person,
       color: '#' + Math.floor(Math.random()*16777215).toString(16),
@@ -63,7 +64,11 @@ export function useYProjectStructure() {
       // Whenever somebody updates their awareness information,
       // we log all awareness information from all users.
       console.log(Array.from(awareness.getStates().values()))
-    })
+    });
+    // awareness.on('update', ({ added, updated, removed }) => {
+    //   const changedClients = added.concat(updated).concat(removed);
+    //   broadcastAwarenessMessage(awarenessProtocol.encodeAwarenessUpdate(awareness, changedClients))
+    // })
   }, []);
 
   const createObserve = (yMap) => {

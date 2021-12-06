@@ -40,6 +40,7 @@ const MonacoEditor = (props) => {
         height="90vh"
         defaultLanguage="javascript"
         defaultValue="// some comment"
+        options={{cursorBlinking: 'blink'}}
         onMount={handleEditorDidMount}
       />
     </div>
