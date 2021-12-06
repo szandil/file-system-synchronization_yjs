@@ -7,7 +7,10 @@ const doc = new Y.Doc();
 
 
 
-
+// TODO: metadata (pl. az a fájl legyen kiválasztva mindkét oldalon)
+// TODO: rekurzív fáljrendszer
+// doc.clientID: number
+// TODO: editorban látni lehessen a másik kurzorát
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
@@ -118,6 +121,23 @@ export function useYProjectStructure() {
         fs = fs.get(path.shift());
       }
       text=fs.get(path[0]);
+
+      const awareness = provider.awareness;
+      var person = prompt(
+        "Please enter your name",
+        Math.floor(Math.random() * 10) + "User"
+      );
+
+      if (person === " ") {
+        person = Math.floor(Math.random() * 10) + "User";
+      }
+
+      awareness.setLocalStateField("user", {
+        name: person,
+        color: '#' + Math.floor(Math.random()*16777215).toString(16),
+      });
+      console.log(awareness.clientID);
+
 
       // return null;
       return new MonacoBinding(
