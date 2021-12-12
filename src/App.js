@@ -9,9 +9,9 @@ function App() {
   const [activeFilePath, setActiveFilePath] = useState([]);
   // console.log('data1', data);
   useEffect(() => {
-    projectMethods.addFile('file1.js');
-    projectMethods.addFile('file2.js');
-    projectMethods.addFile('file3.js');
+    // projectMethods.addFile('file1.js');
+    // projectMethods.addFile('file2.js');
+    // projectMethods.addFile('file3.js');
   }, []);
 
 

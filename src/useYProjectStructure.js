@@ -6,7 +6,7 @@ import * as awarenessProtocol from 'y-protocols/awareness.js'
 
 const doc = new Y.Doc();
 
-
+// TODO: github rövid leírással
 
 // TODO: metadata (pl. az a fájl legyen kiválasztva mindkét oldalon)
 // TODO: rekurzív fáljrendszer
@@ -15,6 +15,8 @@ const doc = new Y.Doc();
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
+const _metadata = yData.get('metadata');
+_metadata.set('contributors', new Y.Array());
 const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
 const awareness = provider.awareness;
 
@@ -43,43 +45,68 @@ export function useYProjectStructure() {
   //   }
   // });
 
-  useEffect(() =>{
-    createObserve(yData.get('metadata'));
-    createObserve(yData.get('filesystem'));
-    var person = prompt(
-      "Please enter your name",
-      Math.floor(Math.random() * 10) + "User"
-    );
+  const updateData = () => {
+    setMetaData((yData.get('metadata')).toJSON());
+    setFilesystem((yData.get('filesystem')).toJSON());
+  };
 
-    if (person === " ") {
-      person = Math.floor(Math.random() * 10) + "User";
+  useEffect(() =>{
+    const _filesystem = yData.get('filesystem');
+    const _metadata = yData.get('metadata');
+    const _contributors = _metadata.get('contributors');
+    createObserve(_filesystem);
+    createObserve(_filesystem);
+    createObserve(_contributors);
+    setFilesystem(_filesystem.toJSON());
+    setMetaData(_metadata.toJSON());
+    // var person = prompt(
+    //   "Please enter your name",
+    //   Math.floor(Math.random() * 10) + "User"
+    // );
+    //
+    // if (person === " ") {
+    //   person = Math.floor(Math.random() * 10) + "User";
+    // }
+    // awareness.setLocalStateField("user", {
+    //   name: person,
+    //   color: '#' + Math.floor(Math.random()*16777215).toString(16),
+    // });
+    console.log('client id',awareness.clientID);
+    // // if (!Array.from(awareness.getStates().values()).includes(awareness.clientID)) {
+    if (!((_contributors.toArray()).includes(awareness.clientID))) {
+      _contributors.push([awareness.clientID]);
+      console.log('contributors', _contributors.toArray());
     }
-    awareness.setLocalStateField("user", {
-      name: person,
-      color: '#' + Math.floor(Math.random()*16777215).toString(16),
-    });
-    console.log(awareness.clientID);
-    awareness.on('change', changes => {
-      // Whenever somebody updates their awareness information,
-      // we log all awareness information from all users.
-      console.log(Array.from(awareness.getStates().values()))
-    });
+
+    // awareness.on('change', changes => {
+    //   // Whenever somebody updates their awareness information,
+    //   // we log all awareness information from all users.
+    //   console.log('awareness states', Array.from(awareness.getStates().values()));
+    //   console.log('awareness states', Array.from(awareness.getStates().keys()));
+    //   console.log('changes', changes);
+    //   console.log('awareness', awareness);
+    //   console.log('contributors', _contributors.toArray());
+    // });
+
     // awareness.on('update', ({ added, updated, removed }) => {
     //   const changedClients = added.concat(updated).concat(removed);
     //   broadcastAwarenessMessage(awarenessProtocol.encodeAwarenessUpdate(awareness, changedClients))
     // })
+
+    provider.on('sync', (isSynced) => {
+      console.log('isSynced', isSynced);
+      console.log(yData.toJSON());
+      updateData();
+    });
   }, []);
 
   const createObserve = (yMap) => {
     yMap.observe(event => {
       console.log('\n');
-      // if (Array.from(event[0].changes.keys.entries()).length > 0) {
-      setMetaData((yData.get('metadata')).toJSON());
-      setFilesystem((yData.get('filesystem')).toJSON());
+      updateData();
       console.log('ydata observe', yData.toJSON());
       console.log('\n');
 
-      // }
     });
   };
 
@@ -112,6 +139,7 @@ export function useYProjectStructure() {
         yText.insert(0,name+'value');
         fs.set(name, yText);
       }
+
     },
 
     // deleteFile: (path) => {
@@ -147,10 +175,6 @@ export function useYProjectStructure() {
       }
       text=fs.get(path[0]);
 
-
-
-
-      // return null;
       return new MonacoBinding(
         text,
         /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
