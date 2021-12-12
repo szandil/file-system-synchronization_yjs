@@ -13,10 +13,22 @@
     left: 0;
     /*background-color: #2d333b;*/
     background-color: rgb(243,243,243);
-    box-shadow: 5px 3px 3px 0px rgba(31,31,31,0.2);
+    box-shadow: 5px 3px 3px 0 rgba(31,31,31,0.2);
     overflow-x: hidden;
     padding-top: 20px;
 
+}
+
+.fileButton {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fileButton>* {
+    color: #9f0000;
+}
+.fileButton.active>* {
+    color: #ff6464;
 }
 
 

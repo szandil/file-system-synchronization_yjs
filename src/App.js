@@ -1,7 +1,10 @@
 import './App.css';
 import {useYProjectStructure} from "./useYProjectStructure";
 import { useEffect, useState} from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import Main from "./Main/Main";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 
 function App() {
 
@@ -29,17 +32,27 @@ function App() {
       <div className="filenav">
         <div className="list-group list-group-flush">
           {buttons.map(file =>
-          <button
-            type="button"
-            key={file.key}
-            id={`list-btn-${file.key}`}
-            className={`list-group-item list-group-item-action ${activeFilePath.toString()===file.path.toString() ? 'active' : ''}`}
-            onClick={() => {
-              setActiveFilePath(file.path)
-            }}
-            >
-          {file.key}
-            </button>
+            <div key={file.key} className={'fileButton'}>
+              <button
+                type="button"
+                id={`list-btn-${file.key}`}
+                className={`list-group-item list-group-item-action ${activeFilePath.toString() === file.path.toString() ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveFilePath(file.path)
+                }}>
+                {file.key}
+              </button>
+              <FontAwesomeIcon
+                icon={faTrashAlt}
+                onClick={() => {
+                  projectMethods.deleteFile(file.path.toString());
+                  if (activeFilePath.toString() === file.path.toString()) {
+                    setActiveFilePath(buttons[0].path);
+                  }
+                  projectMethods.logData();
+                }
+                }/>
+            </div>
           )}
         </div>
 

@@ -15,8 +15,9 @@ const doc = new Y.Doc();
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
-const _metadata = yData.get('metadata');
-_metadata.set('contributors', new Y.Array());
+const yjs_metadata = yData.get('metadata');
+const yjs_filesystem = yData.get('filesystem');
+yjs_metadata.set('contributors', new Y.Array());
 const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
 const awareness = provider.awareness;
 
@@ -51,14 +52,18 @@ export function useYProjectStructure() {
   };
 
   useEffect(() =>{
-    const _filesystem = yData.get('filesystem');
-    const _metadata = yData.get('metadata');
-    const _contributors = _metadata.get('contributors');
-    createObserve(_filesystem);
-    createObserve(_filesystem);
+
+    const _contributors = yjs_metadata.get('contributors');
+    createObserve(yjs_filesystem);
+    createObserve(yjs_metadata);
     createObserve(_contributors);
-    setFilesystem(_filesystem.toJSON());
-    setMetaData(_metadata.toJSON());
+
+    doc.on('update', update => {
+      console.log('update', update)
+      Y.applyUpdate(doc, update);
+      updateData();
+    });
+
     // var person = prompt(
     //   "Please enter your name",
     //   Math.floor(Math.random() * 10) + "User"
@@ -73,10 +78,10 @@ export function useYProjectStructure() {
     // });
     console.log('client id',awareness.clientID);
     // // if (!Array.from(awareness.getStates().values()).includes(awareness.clientID)) {
-    if (!((_contributors.toArray()).includes(awareness.clientID))) {
-      _contributors.push([awareness.clientID]);
-      console.log('contributors', _contributors.toArray());
-    }
+    // if (!((_contributors.toArray()).includes(awareness.clientID))) {
+    //   _contributors.push([awareness.clientID]);
+    //   console.log('contributors', _contributors.toArray());
+    // }
 
     // awareness.on('change', changes => {
     //   // Whenever somebody updates their awareness information,
@@ -139,36 +144,36 @@ export function useYProjectStructure() {
         yText.insert(0,name+'value');
         fs.set(name, yText);
       }
-
+      // updateData();
     },
 
-    // deleteFile: (path) => {
-    //   let p = path.split('/');
-    //   let fs = yData.get('filesystem');
-    //
-    //   let last = p.pop();
-    //   for (let i = 0; i < p.length; i++) {
-    //     if (fs.has(p[i])) {
-    //       fs = fs.get(p[i]);
-    //     } else {
-    //       console.log('Delete failed - path not found!');
-    //       return;
-    //     }
-    //   }
-    //   if (!fs.has(last)) {
-    //     console.log('Delete failed - path not found!');
-    //     return;
-    //   } else {
-    //     if (last.split('.') === 1) {
-    //       this.delete(path + '/' + last);     // kell?
-    //     }
-    //     fs.delete(last);
-    //   }
-    // }
+    deleteFile: (path) => {
+      let p = path.split('/');
+      let fs = yData.get('filesystem');
+
+      let last = p.pop();
+      for (let i = 0; i < p.length; i++) {
+        if (fs.has(p[i])) {
+          fs = fs.get(p[i]);
+        } else {
+          console.log('Delete failed - path not found!');
+          return;
+        }
+      }
+      if (!fs.has(last)) {
+        console.log('Delete failed - path not found!');
+      } else {
+        if (last.split('.') === 1) {
+          this.deleteFile(path + '/' + last);     // kell?
+        }
+        fs.delete(last);
+      }
+      // updateData();
+    },
 
     createMonacoBinding: (path, editor, monaco) => {
       console.log('yData',yData.toJSON());
-      let text=null;
+      let text;
       let fs = yData.get('filesystem');
       while(path.length > 1) {
         fs = fs.get(path.shift());
