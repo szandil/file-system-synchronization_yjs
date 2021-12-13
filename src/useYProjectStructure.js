@@ -2,7 +2,6 @@ import * as Y from "yjs";
 import {useEffect, useState} from "react";
 import {MonacoBinding} from "y-monaco";
 import {WebsocketProvider} from "y-websocket";
-import * as awarenessProtocol from 'y-protocols/awareness.js'
 
 const doc = new Y.Doc();
 
@@ -15,19 +14,22 @@ const doc = new Y.Doc();
 const yData = doc.getMap('project-data');
 yData.set('metadata', new Y.Map());
 yData.set('filesystem', new Y.Map());
-const yjs_metadata = yData.get('metadata');
-const yjs_filesystem = yData.get('filesystem');
-yjs_metadata.set('contributors', new Y.Array());
 const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
 const awareness = provider.awareness;
 
-
+const setUpMetaData = () => {
+  (yData.get('metadata')).set('contributors', new Y.Array());
+  (yData.get('metadata')).set('activeFilePath', '');
+  (yData.get('metadata')).set('isReadOnlyForStudents', false);
+};
+setUpMetaData();
 
 export function useYProjectStructure() {
 
 
-  const [metaData,setMetaData] = useState({});
+  const [metaData, setMetaData] = useState({});
   const [filesystem, setFilesystem] = useState({});
+  const [isTeacher, setIsTeacher] = useState(false);
 
 
   // yData.observeDeep((event) => {
@@ -51,17 +53,29 @@ export function useYProjectStructure() {
     setFilesystem((yData.get('filesystem')).toJSON());
   };
 
-  useEffect(() =>{
+  useEffect(() => {
 
-    const _contributors = yjs_metadata.get('contributors');
-    createObserve(yjs_filesystem);
-    createObserve(yjs_metadata);
-    createObserve(_contributors);
+    createObserve(yData.get('filesystem'));
+    createObserve(yData.get('metadata'));
+    createObserve(yData.get('metadata').get('contributors'));
+    updateData();
 
     doc.on('update', update => {
-      console.log('update', update)
       Y.applyUpdate(doc, update);
       updateData();
+    });
+
+    provider.on('sync', () => {
+      updateData();
+      console.log('client id', awareness.clientID);
+      const contributors = yData.get('metadata').get('contributors')
+      if (!contributors || contributors.length === 0 || (contributors.toArray()).includes(awareness.clientID)) {
+        setIsTeacher(true);
+      }
+      if (!((contributors.toArray()).includes(awareness.clientID))) {
+        yData.get('metadata').get('contributors').push([awareness.clientID]);
+        console.log('contributors', yData.get('metadata').get('contributors').toArray());
+      }
     });
 
     // var person = prompt(
@@ -76,33 +90,41 @@ export function useYProjectStructure() {
     //   name: person,
     //   color: '#' + Math.floor(Math.random()*16777215).toString(16),
     // });
-    console.log('client id',awareness.clientID);
-    // // if (!Array.from(awareness.getStates().values()).includes(awareness.clientID)) {
-    // if (!((_contributors.toArray()).includes(awareness.clientID))) {
-    //   _contributors.push([awareness.clientID]);
-    //   console.log('contributors', _contributors.toArray());
-    // }
 
-    // awareness.on('change', changes => {
-    //   // Whenever somebody updates their awareness information,
-    //   // we log all awareness information from all users.
-    //   console.log('awareness states', Array.from(awareness.getStates().values()));
-    //   console.log('awareness states', Array.from(awareness.getStates().keys()));
-    //   console.log('changes', changes);
-    //   console.log('awareness', awareness);
-    //   console.log('contributors', _contributors.toArray());
-    // });
+
+    awareness.on('change', changes => {
+      console.log('changes', changes);
+      if (changes &&
+        (changes.updated && changes.updated.length > 0) &&
+        (!changes.add || (changes.added && changes.added.length === 0)) &&
+        (!changes.deleted || (changes.deleted && changes.deleted.length === 0))) {
+        console.log('updated', changes.updated);
+        return;
+      }
+      const contributors = yData.get('metadata').get('contributors')
+      for (const removed of changes.removed) {
+        let i = 0;
+        for (const contributor of contributors) {
+          if (contributor === removed) {
+            yData.get('metadata').get('contributors').delete(i, 1);
+            i--;
+          }
+          i++;
+        }
+      }
+      // checkContributors();
+      console.log('awareness states', Array.from(awareness.getStates().keys()));
+      console.log('changes', changes);
+      console.log('awareness', awareness);
+      console.log('contributors', yData.get('metadata').get('contributors').toArray());
+    });
 
     // awareness.on('update', ({ added, updated, removed }) => {
     //   const changedClients = added.concat(updated).concat(removed);
     //   broadcastAwarenessMessage(awarenessProtocol.encodeAwarenessUpdate(awareness, changedClients))
     // })
 
-    provider.on('sync', (isSynced) => {
-      console.log('isSynced', isSynced);
-      console.log(yData.toJSON());
-      updateData();
-    });
+
   }, []);
 
   const createObserve = (yMap) => {
@@ -113,6 +135,18 @@ export function useYProjectStructure() {
       console.log('\n');
 
     });
+  };
+
+  const checkContributors = () => {
+    const aw_state_values = Array.from(awareness.getStates().keys());
+    let i = 0;
+    for (const contributor of yData.get('metadata').get('contributors')) {
+      if (!aw_state_values.includes(contributor)) {
+        yData.get('metadata').get('contributors').delete(i, 1);
+        i--;
+      }
+      i++;
+    }
   };
 
 
@@ -141,10 +175,9 @@ export function useYProjectStructure() {
         createObserve(fs.get(name));
       } else {                        // new file
         const yText = new Y.Text();
-        yText.insert(0,name+'value');
+        yText.insert(0, name + 'value');
         fs.set(name, yText);
       }
-      // updateData();
     },
 
     deleteFile: (path) => {
@@ -168,17 +201,16 @@ export function useYProjectStructure() {
         }
         fs.delete(last);
       }
-      // updateData();
     },
 
     createMonacoBinding: (path, editor, monaco) => {
-      console.log('yData',yData.toJSON());
+      console.log('yData - mondaco binding', yData.toJSON());
       let text;
       let fs = yData.get('filesystem');
-      while(path.length > 1) {
+      while (path.length > 1) {
         fs = fs.get(path.shift());
       }
-      text=fs.get(path[0]);
+      text = fs.get(path[0]);
 
       return new MonacoBinding(
         text,
@@ -188,10 +220,34 @@ export function useYProjectStructure() {
       );
     },
 
+    setActiveFile: (path) => {
+      yData.get('metadata').set('activeFilePath', path);
+    },
+
+    logContributors: () => {
+      const contributors = yData.get('metadata').get('contributors');
+      console.log('contributors', contributors.toArray());
+      console.log('client id', awareness.clientID);
+      console.log('awareness', awareness);
+    },
+
+    deleteContributors: () => {
+      const contributors = yData.get('metadata').get('contributors');
+      if (contributors.length > 0) yData.get('metadata').get('contributors').delete(0, contributors.length);
+    },
+
+    setReadonlyForStudents: (isReadOnly) => {
+      yData.get('metadata').set('isReadOnlyForStudents', isReadOnly);
+    },
+
+    getIsReadOnly: () => {
+      return !isTeacher && yData.get('metadata').get('isReadOnlyForStudents');
+    },
+
     logData: () => {
       console.log('logdata in hook', yData.toJSON());
     }
   };
 
-  return [metaData, filesystem, projectMethods];
+  return [metaData, filesystem, isTeacher, projectMethods];
 }

@@ -4,7 +4,7 @@
 }
 
 /* The sidebar menu */
-.filenav {
+.file-nav {
     height: 100%;
     width: 160px;
     position: fixed;
@@ -19,18 +19,37 @@
 
 }
 
-.fileButton {
+.file-button {
     display: flex;
     justify-content: space-between;
 }
 
-.fileButton>* {
-    color: #9f0000;
-}
-.fileButton.active>* {
-    color: #ff6464;
+.icon-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
 }
 
+.delete-icon {
+    color: #9f0000;
+}
+/*.deleteIcon.active {*/
+/*    color: #ff6464;*/
+/*}*/
+
+.top-part {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.role {
+    font-size: 1.2rem;
+}
 
 
 /* Style page content */

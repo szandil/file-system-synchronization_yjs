@@ -5,9 +5,10 @@ import MonacoEditor from "./MonacoEditor/MonacoEditor";
 const Main = (props) => {
   return (
     <div>
-      <p>Active file: {props.activeFilePath}</p>
-      {/* unbind helyett rerender */}
-      <MonacoEditor projectMethods={props.projectMethods} activeFilePath={props.activeFilePath}/>
+      <MonacoEditor
+        projectMethods={props.projectMethods}
+        activeFilePath={props.activeFilePath}
+        isReadOnly={props.isReadOnly}/>
     </div>
   );
 };
