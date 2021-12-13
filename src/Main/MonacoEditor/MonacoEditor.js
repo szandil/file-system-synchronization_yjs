@@ -10,10 +10,10 @@ let monacoBinding = null;
 const MonacoEditor = (props) => {
 
   const [editor, setEditor] = useState();
-  // const [monaco, setMonaco] = useState();
   const monaco = useMonaco();
   const {activeFilePath} = props;
   const {projectMethods} = props;
+  const {isReadOnly} = props;
 
 
   useEffect(() => {
@@ -31,11 +31,10 @@ const MonacoEditor = (props) => {
   useEffect(() => {
     if (editor)
       editor.updateOptions({readOnly: projectMethods.getIsReadOnly()});
-  }, [editor, props.isReadOnly]);
+  }, [editor, isReadOnly, activeFilePath]);
 
   function handleEditorDidMount(editor, monaco) {
     setEditor(editor);
-    // setMonaco(monaco);
     console.log("onMount: the editor instance:", editor);
     console.log("onMount: the monaco instance:", monaco);
   }
@@ -47,7 +46,6 @@ const MonacoEditor = (props) => {
         defaultLanguage="javascript"
         defaultValue="// some comment"
         onMount={handleEditorDidMount}
-        // updateOptions={{readOnly: props.isReadOnly}}
       />
     </div>
   );

@@ -27,7 +27,7 @@ function App() {
     buttons.push({'key': key, 'path': path});
   }
 
-  const [fileInd, setFileInd] = useState(0);
+  // const [fileInd, setFileInd] = useState(0);
 
   const handleStudentReadOnlyChange = (event) => {
     projectMethods.setReadonlyForStudents(event.target.checked);
@@ -43,27 +43,27 @@ function App() {
                 type="button"
                 id={`list-btn-${file.key}`}
                 className={`list-group-item list-group-item-action ${activeFilePath.toString() === file.path.toString() ? 'active' : ''} no-select`}
+                disabled={!isTeacher && isReadOnlyForStudents}
                 onClick={() => {
                   projectMethods.setActiveFile(file.path);
-                  // setActiveFilePath(file.path)
                 }}>
                 {file.key}
               </button>
-              <div className={`icon-div ${activeFilePath.toString() === file.path.toString() ? 'active' : ''}
-              ist-group-item list-group-item-action`}
-                   onClick={() => {
-                     projectMethods.deleteFile(file.path.toString());
-                     if (activeFilePath.toString() === file.path.toString()) {
-                       projectMethods.setActiveFile(buttons[0].path);
-                       // setActiveFilePath(buttons[0].path);
-                     }
-                     projectMethods.logData();
-                   }}>
+              <button
+                className={`icon-div ${activeFilePath.toString() === file.path.toString() ? 'active' : ''} list-group-item list-group-item-action`}
+                disabled={(!isTeacher && isReadOnlyForStudents) || activeFilePath.toString() === file.path.toString()}
+                onClick={() => {
+                  projectMethods.deleteFile(file.path.toString());
+                  if (activeFilePath.toString() === file.path.toString()) {
+                    projectMethods.setActiveFile(buttons[0].path);
+                  }
+                  projectMethods.logData();
+                }}>
                 <FontAwesomeIcon
                   icon={faTrashAlt}
                   className={`delete-icon ${activeFilePath.toString() === file.path.toString() ? 'active' : ''}`}
                 />
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -76,10 +76,16 @@ function App() {
               type="button"
               className="btn btn-primary"
               onClick={() => {
-                projectMethods.addFile('test' + fileInd + '.js');
-                setFileInd(prevState => ++prevState);
-                projectMethods.logData();
-              }}>Add test file #{fileInd}</button>
+                const fileName = prompt("Add meg az új fájl nevét (kiterjesztéssel együtt)!");
+                if (fileName.trim() !== '' && fileName.split('.').length === 2) {
+                  projectMethods.addFile(fileName);
+                } else {
+                  alert('Helytelen fájlnév!');
+                }
+                // projectMethods.addFile('test' + fileInd + '.js');
+                // setFileInd(prevState => ++prevState);
+                // projectMethods.logData();
+              }}>Add new file</button>
             <button
               type="button"
               className="btn btn-primary m-2"
@@ -100,15 +106,17 @@ function App() {
         </div>
         {isTeacher &&
           <div className="form-check form-switch">
-          <input
-            className="form-check-input"
-            type="checkbox" role="switch"
-            id="flexSwitchCheckDefault"
-            checked={metaData.isReadOnlyForStudents ?? false}
-            onChange={handleStudentReadOnlyChange}/>
-          <label className="form-check-label no-select" htmlFor="flexSwitchCheckDefault">Diákok számára csak olvasható</label>
-        </div>}
-        {!isTeacher && metaData.isReadOnlyForStudents && <h6 className={'text-center'}>A szerkesztést a tanár letiltotta!</h6>}
+            <input
+              className="form-check-input"
+              type="checkbox" role="switch"
+              id="flexSwitchCheckDefault"
+              checked={metaData.isReadOnlyForStudents ?? false}
+              onChange={handleStudentReadOnlyChange}/>
+            <label className="form-check-label no-select" htmlFor="flexSwitchCheckDefault">Diákok számára csak
+              olvasható</label>
+          </div>}
+        {!isTeacher && metaData.isReadOnlyForStudents &&
+          <h6 className={'text-center'}>A szerkesztést a tanár letiltotta!</h6>}
         <Main activeFilePath={activeFilePath} isReadOnly={isReadOnlyForStudents} projectMethods={projectMethods}/>
       </div>
     </div>

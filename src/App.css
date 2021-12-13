@@ -24,14 +24,26 @@
     justify-content: space-between;
 }
 
-.icon-div {
+.icon-div{
     display: flex;
     align-items: center;
     justify-content: center;
     width: 40px;
-    cursor: pointer;
     background-color: white;
-    border: 1px solid rgba(0,0,0,.125);
+    margin-top: unset;
+}
+
+.icon-div.list-group-item.list-group-item.active {
+    margin-top: unset;
+    border-left: 1px solid rgba(0,0,0,.125);
+}
+
+.icon-div.list-group-item.list-group-item.active .delete-icon {
+    color: white;
+}
+
+.icon-div[disabled] .delete-icon {
+    color: #8d4747;
 }
 
 .delete-icon {
@@ -48,7 +60,7 @@
 }
 
 .role {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 

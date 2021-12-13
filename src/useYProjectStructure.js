@@ -12,17 +12,17 @@ const doc = new Y.Doc();
 // doc.clientID: number
 // TODO: editorban látni lehessen a másik kurzorát
 const yData = doc.getMap('project-data');
-yData.set('metadata', new Y.Map());
-yData.set('filesystem', new Y.Map());
-const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project', doc);
+const provider = new WebsocketProvider('wss://demos.yjs.dev', 'collaborative-project-2', doc);
 const awareness = provider.awareness;
 
-const setUpMetaData = () => {
+const initData = () => {
+  yData.set('metadata', new Y.Map());
+  yData.set('filesystem', new Y.Map());
   (yData.get('metadata')).set('contributors', new Y.Array());
   (yData.get('metadata')).set('activeFilePath', '');
   (yData.get('metadata')).set('isReadOnlyForStudents', false);
 };
-setUpMetaData();
+initData();
 
 export function useYProjectStructure() {
 
@@ -54,7 +54,6 @@ export function useYProjectStructure() {
   };
 
   useEffect(() => {
-
     createObserve(yData.get('filesystem'));
     createObserve(yData.get('metadata'));
     createObserve(yData.get('metadata').get('contributors'));
@@ -112,18 +111,11 @@ export function useYProjectStructure() {
           i++;
         }
       }
-      // checkContributors();
       console.log('awareness states', Array.from(awareness.getStates().keys()));
       console.log('changes', changes);
       console.log('awareness', awareness);
       console.log('contributors', yData.get('metadata').get('contributors').toArray());
     });
-
-    // awareness.on('update', ({ added, updated, removed }) => {
-    //   const changedClients = added.concat(updated).concat(removed);
-    //   broadcastAwarenessMessage(awarenessProtocol.encodeAwarenessUpdate(awareness, changedClients))
-    // })
-
 
   }, []);
 
@@ -135,18 +127,6 @@ export function useYProjectStructure() {
       console.log('\n');
 
     });
-  };
-
-  const checkContributors = () => {
-    const aw_state_values = Array.from(awareness.getStates().keys());
-    let i = 0;
-    for (const contributor of yData.get('metadata').get('contributors')) {
-      if (!aw_state_values.includes(contributor)) {
-        yData.get('metadata').get('contributors').delete(i, 1);
-        i--;
-      }
-      i++;
-    }
   };
 
 
@@ -246,6 +226,10 @@ export function useYProjectStructure() {
 
     logData: () => {
       console.log('logdata in hook', yData.toJSON());
+    },
+
+    reset: () => {
+      initData();
     }
   };
 
