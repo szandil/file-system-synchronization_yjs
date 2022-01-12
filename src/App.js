@@ -1,6 +1,5 @@
 import './App.css';
 import {useYProjectStructure} from "./useYProjectStructure";
-import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 import Main from "./Main/Main";
@@ -11,13 +10,6 @@ function App() {
   const [metaData, filesystem, isTeacher, projectMethods] = useYProjectStructure();
   const activeFilePath = metaData.activeFilePath ?? '';
   const isReadOnlyForStudents = metaData.isReadOnlyForStudents ?? false;
-  // const [activeFilePath, setActiveFilePath] = useState([]);
-  // console.log('data1', data);
-  useEffect(() => {
-    // projectMethods.addFile('file1.js');
-    // projectMethods.addFile('file2.js');
-    // projectMethods.addFile('file3.js');
-  }, []);
 
 
   let buttons = [];
@@ -26,8 +18,6 @@ function App() {
     path = [key];
     buttons.push({'key': key, 'path': path});
   }
-
-  // const [fileInd, setFileInd] = useState(0);
 
   const handleStudentReadOnlyChange = (event) => {
     projectMethods.setReadonlyForStudents(event.target.checked);
@@ -57,7 +47,6 @@ function App() {
                   if (activeFilePath.toString() === file.path.toString()) {
                     projectMethods.setActiveFile(buttons[0].path);
                   }
-                  projectMethods.logData();
                 }}>
                 <FontAwesomeIcon
                   icon={faTrashAlt}
@@ -70,53 +59,39 @@ function App() {
 
       </div>
       <div className="main-content">
-        <div className={'top-part'}>
-          <div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => {
-                const fileName = prompt("Add meg az új fájl nevét (kiterjesztéssel együtt)!");
-                if (fileName.trim() !== '' && fileName.split('.').length === 2) {
-                  projectMethods.addFile(fileName);
-                } else {
-                  alert('Helytelen fájlnév!');
-                }
-                // projectMethods.addFile('test' + fileInd + '.js');
-                // setFileInd(prevState => ++prevState);
-                // projectMethods.logData();
-              }}>Add new file</button>
-            <button
-              type="button"
-              className="btn btn-primary m-2"
-              onClick={() => {
-                projectMethods.logContributors();
-              }}>Résztvevők log
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={() => {
-                projectMethods.deleteContributors();
-              }}>Résztvevők törlése
-            </button>
+        <div className={'top'}>
+          <div className={'top-part'}>
+            <div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const fileName = prompt("Add meg az új fájl nevét (kiterjesztéssel együtt)!");
+                  if (fileName.trim() !== '' && fileName.split('.').length === 2) {
+                    projectMethods.addFile(fileName);
+                  } else {
+                    alert('Helytelen fájlnév!');
+                  }
+                }}>Add new file
+              </button>
+            </div>
+            {isTeacher &&
+              <span className={'role no-select'}><FontAwesomeIcon icon={faChalkboardTeacher}/>  Tanár</span>}
+            {!isTeacher && <span className={'role no-select'}><FontAwesomeIcon icon={faGraduationCap}/>  Diák</span>}
           </div>
-          {isTeacher && <span className={'role no-select'}><FontAwesomeIcon icon={faChalkboardTeacher}/>  Tanár</span>}
-          {!isTeacher && <span className={'role no-select'}><FontAwesomeIcon icon={faGraduationCap}/>  Diák</span>}
-        </div>
-        {isTeacher &&
-          <div className="form-check form-switch">
-            <input
-              className="form-check-input"
-              type="checkbox" role="switch"
-              id="flexSwitchCheckDefault"
-              checked={metaData.isReadOnlyForStudents ?? false}
-              onChange={handleStudentReadOnlyChange}/>
-            <label className="form-check-label no-select" htmlFor="flexSwitchCheckDefault">Diákok számára csak
-              olvasható</label>
-          </div>}
-        {!isTeacher && metaData.isReadOnlyForStudents &&
-          <h6 className={'text-center'}>A szerkesztést a tanár letiltotta!</h6>}
+          {isTeacher &&
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input"
+                type="checkbox" role="switch"
+                id="flexSwitchCheckDefault"
+                checked={metaData.isReadOnlyForStudents ?? false}
+                onChange={handleStudentReadOnlyChange}/>
+              <label className="form-check-label no-select" htmlFor="flexSwitchCheckDefault">Diákok számára csak
+                olvasható</label>
+            </div>}
+          {!isTeacher && metaData.isReadOnlyForStudents &&
+            <h6 className={'text-center'}>A szerkesztést a tanár letiltotta!</h6>}</div>
         <Main activeFilePath={activeFilePath} isReadOnly={isReadOnlyForStudents} projectMethods={projectMethods}/>
       </div>
     </div>

@@ -1,6 +1,4 @@
-import './Main.module.css';
 import MonacoEditor from "./MonacoEditor/MonacoEditor";
-
 
 const Main = (props) => {
   return (

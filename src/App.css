@@ -1,5 +1,4 @@
 .all {
-    /*color: #d0cece;*/
     color: rgb(97,97,97);
 }
 
@@ -11,7 +10,6 @@
     z-index: 1;
     top: 0;
     left: 0;
-    /*background-color: #2d333b;*/
     background-color: rgb(243,243,243);
     box-shadow: 5px 3px 3px 0 rgba(31,31,31,0.2);
     overflow-x: hidden;
@@ -49,9 +47,10 @@
 .delete-icon {
     color: #9f0000;
 }
-/*.deleteIcon.active {*/
-/*    color: #ff6464;*/
-/*}*/
+
+.top {
+    margin-bottom: 24px;
+}
 
 .top-part {
     display: flex;
@@ -63,7 +62,6 @@
     font-size: 1.3rem;
 }
 
-
 /* Style page content */
 .main-content {
     margin-left: 160px; /* Same as the width of the sidebar */
@@ -72,4 +70,8 @@
     background-color: rgb(243,243,243);
     height: 100%;
     width: calc(100vw - 160px);
+}
+
+.main {
+    margin-top: 24px;
 }
